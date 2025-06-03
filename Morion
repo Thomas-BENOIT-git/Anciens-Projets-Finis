@@ -1,0 +1,306 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+Authors :
+    Thomas Benoit
+    Etienne Leal
+    Paul Orliange
+date 04/12/2023
+Programme pour jouer au morpion contre l'ordinateur.
+This is a temporary script file.
+"""
+#********* [III/FONCTIONS]*********#
+def CoupDuRobot(liste):
+    """
+    Parameters
+    ----------
+    liste : TYPE
+        DESCRIPTION.
+
+    prend la grille, vérifie si 3 croix ou ronds sont alignées, si oui, la 
+    partie est déclarée comme gagnée par l'un des deux joueurs, une nouvelle
+    grille est alors crée
+    -------
+    None.
+
+    """
+    print("tour du robot")
+    l = 0
+    c = 0
+    case = ""
+    for i in range(9) : 
+        #vérifie si un coup permet au robot de gagner,
+        #si oui, il jouera donc ce coup
+        if l == 3 or c == 3:
+            break
+        case = liste[l][c]        
+        if liste[l][c] == 0 : 
+            liste[l][c]="X"
+        
+        if gagné(grille)[0] == True:
+            break
+        else:
+            liste[l][c] = case        
+        c = c + 1
+        if c == 3:
+            c = 0
+            l = l + 1
+    if gagné(grille)[0] == True:
+        return
+    l = 0
+    c = 0
+    case = ""
+    for i in range(9) :
+        #permet de vérifier si le joueur peut gagner en un seul coup au coup suivant
+        #si il voit ce coup, il le jouera donc pour empêcher le joueur de gagner
+        if l == 3 or c == 3:
+            break
+        case = liste[l][c]        
+        if liste[l][c] == 0 : 
+            liste[l][c]="O"
+        
+        if gagné(grille)[0] == True:
+            liste[l][c]="X"
+            return
+        else:
+            liste[l][c] = case        
+        c = c + 1
+        if c == 3:
+            c = 0
+            l = l + 1
+    if liste[1][1] == 0 :
+        #si aucune des possibilitées précédentes n'est vraie, et que le centre
+        #est vide, le robot joue au centre
+        liste[1][1] = "X"
+        return
+    l = 0
+    c = 0
+    for i in range(4):
+    #si le robot a un X placé dans un coin, il jouera à côté de ce coin pour 
+    #aligner deux X
+        if liste[l][c] == "X" :
+           if l == c == 2:
+               if liste[l-1][c] == 0: 
+                   liste[l-1][c] = "X"
+                   return
+               if liste[l][c-1] == 0: 
+                   liste[l][c-1] = "X"
+                   return
+           if l == c == 0:
+               if liste[l+1][c] == 0: 
+                   liste[l+1][c] = "X"
+                   return
+               if liste[l][c+1] == 0: 
+                   liste[l][c+1] = "X"
+                   return        
+           if l == 2 and c == 0:
+               if liste[l][c+1] == 0: 
+                   liste[l][c+1] = "X"
+                   return
+               if liste[l-1][c] == 0: 
+                   liste[l-1][c] = "X"
+                   return
+           if l == 0 and c == 2:
+               if liste[l+1][c] == 0: 
+                   liste[l+1][c] = "X"
+                   return
+               if liste[l][c-1] == 0: 
+                   liste[l][c-1] = "X"
+                   return                              
+        else:
+            c = c + 2
+            if c == 4:
+                c = 2 
+                l = l + 2 
+                if l == 4:
+                    c = 0
+                    l = 2   
+    l = 0
+    c = 0
+    for i in range(4):
+        #Si aucune des possibilitées précédentes n'est vraie, le robot se placera
+        #dans un coin de la grille
+        if liste[l][c] == 0 :
+           liste[l][c] = "X"
+           return
+        else:
+            c = c + 2
+            if c == 4:
+                c = 2 
+                l = l + 2 
+                if l == 4:
+                    c = 0
+                    l = 2
+
+def nouvelleGrille():
+    """
+    Permet la création d'une nouvelle grille'
+    -------
+    list
+        DESCRIPTION.
+
+    """
+    return [[0,0,0],[0,0,0],[0,0,0]]
+def AfficherLaGrille(grille):
+    """
+    Parameters
+    ----------
+    grille : TYPE
+    DESCRIPTION.
+
+    Return la grille du morpion, avec les lignes et colonnes ABC
+    prend comme valeur d'entrée la grille, et exprime la grille sublimée
+    par les tirets d'Etienne'
+    -------
+    None.
+
+    """
+    print("________________")
+    print("/MORPION/")
+    print("================")
+    print(" ",""," A"," B","","C")
+    print("A|",grille[0])
+    print("B|",grille[1])
+    print("C|",grille[2])
+    print("================")
+    print("/MORPION/")
+    print("________________")
+def JouerUnCoup(symbole):
+    """
+    Parameters
+    ----------
+    symbole : TYPE
+        DESCRIPTION.
+
+    Fonction permettant aux diff joueurs de jouer un coup,
+    en utilisant les colonnes et lignes A B C
+    elle prend comme valeur d'entrée le symbole du joueur ( X ou 0)
+    -------
+    """ 
+    
+    #dictionnaire permettant d'assigner les différentes cases du morpion à
+    #différentes lettre pour rendre l'expérience du joueur plus appréciable
+    dico = {"AA" : (0,0), "AB" : (0,1),"AC" : (0,2),"BA" : (1,0),"BB" : (1,1)
+            ,"BC" : (1,2),"CA" : (2,0),"CB" : (2,1),"CC" : (2,2)}
+        
+    coup = input("dans quel case ? ")
+    
+    ligne,colonne = dico[coup]
+    #Si la case ou le joueur veut jouer est déjà prise, le programme va
+    #demander au joueur une autre case tant qu'il n'en choisit pas une vide
+    while grille[ligne][colonne] != 0 :
+        coup = input("choisit une autre case ? ")    
+        ligne,colonne = dico[coup]
+    grille[ligne][colonne] = symbole
+    
+def gagné(liste):
+    """
+    Parameters
+    ----------
+    liste : TYPE
+    DESCRIPTION.
+
+    Return True si le joueur O ou X a gagné et renvoie un message contenant "joueur
+    O a gagné ou joueur X a gagné", il renvoie False si aucun joueur n'a gagné
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    #teste toute les possibilités de victoires pour le joueur X
+    if liste[0][0] == liste[0][1] == liste[0][2] == "X":
+            return (True,"Joueur X a gagné")     
+    if liste[1][0] == liste[1][1] == liste[1][2] == "X":
+            return (True,"Joueur X a gagné")             
+    if liste[2][0] == liste[2][1] == liste[2][2] == "X":
+            return (True,"Joueur X a gagné")       
+    if liste[0][0] == liste[1][0] == liste[2][0] == "X":
+            return (True,"Joueur X a gagné")          
+    if liste[0][1] == liste[1][1] == liste[2][1] == "X":
+            return (True,"Joueur X a gagné")       
+    if liste[0][2] == liste[1][2] == liste[2][2] == "X":
+            return (True,"Joueur X a gagné")      
+    if liste[0][0] == liste[1][1] == liste[2][2] == "X":
+            return (True,"Joueur X a gagné")  
+    if liste[0][2] == liste[1][1] == liste[2][0] == "X":
+            return (True,"Joueur X a gagné") 
+    #teste toutes les possibilitées de victoire pour le joueur O
+    if liste[0][0] == liste[0][1] == liste[0][2] == "O":
+            return (True,"Joueur O a gagné")
+    if liste[1][0] == liste[1][1] == liste[1][2] == "O":
+            return (True,"Joueur O a gagné")          
+    if liste[2][0] == liste[2][1] == liste[2][2] == "O":
+            return (True,"Joueur O a gagné")    
+    if liste[0][0] == liste[1][0] == liste[2][0] == "O":
+            return (True,"Joueur O a gagné")       
+    if liste[0][1] == liste[1][1] == liste[2][1] == "O":
+            return (True,"Joueur O a gagné")      
+    if liste[0][2] == liste[1][2] == liste[2][2] == "O":
+            return (True,"Joueur O a gagné")      
+    if liste[0][0] == liste[1][1] == liste[2][2] == "O":
+            return (True,"Joueur O a gagné")
+    if liste[0][2] == liste[1][1] == liste[2][0] == "O":
+            return (True,"Joueur O a gagné")
+    return (False,"")   
+    
+def GrillePleine(liste):
+    """
+    Parameters
+    ----------
+    liste : TYPE
+        DESCRIPTION.
+
+    return True si la grille est pleine et donc qu'aucun joueur ne peut jouer,
+    cette information est renvoyée au joueur
+    return False si la grille n'est pas pleine, les joueurs peuvent donc
+    continuer de joueur sur la grille'
+    -------
+    bool
+        DESCRIPTION.
+
+    """
+    c = 0
+    occ = 0
+    t=0
+    for i in range(9):
+        #test si les cases de la grille sont pleines
+       if c==3:
+            c=0
+            t=t+1
+       if liste[t][c]!=0:
+         occ=occ+1
+         c=c+1        
+       else:
+         c=c+1
+    if occ == 9:
+        # si la grille est pleine, l'ordinateur renvoie l'information
+        # au joueur
+        return True
+    else:
+        #si else, c'est que la grille n'est pas pleine, les joueurs peuvent
+        #donc continuer de jouer
+        return False
+    
+#********* [IV/MAIN]*********#
+
+grille=nouvelleGrille()
+tours = 0
+#tant que personne n'a gagné, la partie continue
+while gagné(grille)[0] == False:
+    AfficherLaGrille(grille)
+    if tours % 2 == 0:
+        symbole = "O"       
+        CoupDuRobot(grille)
+    else:
+        JouerUnCoup(symbole)
+    tours = tours + 1
+
+    if GrillePleine(grille) == True:
+        AfficherLaGrille(grille)
+        print("La grille est pleine, fin de partie.")
+        break 
+    
+if gagné(grille)[0] == True:
+    AfficherLaGrille(grille)
+    print(gagné(grille)[1])
+    print("Fin de la partie. Une revanche?")
