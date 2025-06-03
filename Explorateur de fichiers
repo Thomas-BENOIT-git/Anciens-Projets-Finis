@@ -1,0 +1,223 @@
+import os
+import pathlib
+
+infos = [{'': 1},{'': 2}]
+
+##### FONCTIONS #####
+
+def tri_date_creation_croissante(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la date de création
+    croissante
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range(i + 1, n):
+            if os.path.getctime(nvl_list[j][0]) < os.path.getctime(nvl_list[min_ind][0]):
+                min_ind = j
+        nvl_list[i], nvl_list[min_ind] = nvl_list[min_ind], nvl_list[i]
+    return nvl_list
+
+def tri_date_creation_decroissante(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la date de création
+    décroissante
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        max_ind = i
+        for j in range(i + 1, n):
+            if os.path.getctime(nvl_list[j][0]) > os.path.getctime(nvl_list[max_ind][0]):
+                max_ind = j
+        nvl_list[i], nvl_list[max_ind] = nvl_list[max_ind], nvl_list[i]
+    return nvl_list
+
+def tri_date_modification_croissante(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la dernière
+    date de modification dans l'ordre croissant'
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range(i + 1, n):
+            if os.path.getmtime(nvl_list[j][0]) < os.path.getmtime(nvl_list[min_ind][0]):
+                min_ind = j
+        nvl_list[i], nvl_list[min_ind] = nvl_list[min_ind], nvl_list[i]
+    return nvl_list
+
+def tri_date_modification_decroissante(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la dernière
+    date de modification dans l'ordre décroissant'
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        max_ind = i
+        for j in range(i + 1, n):
+            if os.path.getmtime(nvl_list[j][0]) > os.path.getmtime(nvl_list[max_ind][0]):
+                max_ind = j
+        nvl_list[i], nvl_list[max_ind] = nvl_list[max_ind], nvl_list[i]
+    return nvl_list
+
+def tri_par_type_fichier(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère le type de fichier
+    et renvoie une liste de dictionnaires triée par noms de fichiers
+    Elle récupère le chemin du fichier elle-même dans la fonction
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range(i + 1, n):
+            ext_i = os.path.splitext(nvl_list[i][0])[1].lower()
+            ext_j = os.path.splitext(nvl_list[j][0])[1].lower()
+            if ext_j < ext_i:
+                min_ind = j
+        nvl_list[i], nvl_list[min_ind] = nvl_list[min_ind], nvl_list[i]
+    return nvl_list
+
+def tri_taille_croissant(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la taille
+    du fichier triée dans l'ordre croissant
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range ( i+ 1, n):
+            if nvl_list[j][1] < nvl_list[min_ind][1]:
+                min_ind = j
+                nvl_list[i][1], nvl_list[min_ind][1] = nvl_list[min_ind][1], nvl_list[i][1]
+    return nvl_list
+
+def tri_taille_decroissant(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la taille
+    du fichier triée dans l'ordre décroissant
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range ( i+ 1, n):
+            if nvl_list[j][1] > nvl_list[min_ind][1]:
+                min_ind = j
+                nvl_list[i][1], nvl_list[min_ind][1] = nvl_list[min_ind][1], nvl_list[i][1]
+    return nvl_list 
+
+def tri_alph_croissant(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la première
+    lettre de chaque fichier qu'elle trie dans l'ordre croissant
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range (i+ 1,n):
+            if nvl_list[j][1].lower() < nvl_list[min_ind][1].lower():
+                min_ind = j
+                nvl_list[i][1], nvl_list[min_ind][1] = nvl_list[min_ind][1], nvl_list[i][1]
+    return nvl_list
+
+def tri_alph_decroissant(infos):
+    """
+    nvl_list : TYPE
+        DESCRIPTION.
+    prend les fichiers qu'on lui donne sous forme de dictionnaire
+    et renvoie une liste avec les fichiers triés avec comme critère la première
+    lettre de chaque fichier qu'elle trie dans l'ordre décroissant
+    """
+    nvl_list = infos
+    n = len(infos)
+    for i in range(n):
+        min_ind = i
+        for j in range (i+ 1,n):
+            if nvl_list[j][1].lower() > nvl_list[min_ind][1].lower():
+                min_ind = j
+                nvl_list[i][1], nvl_list[min_ind][1] = nvl_list[min_ind][1], nvl_list[i][1]
+    return nvl_list
+
+def info_fichiers (chemins) :
+    """
+    dicts : TYPE
+        DESCRIPTION.
+    à partir des chemins des fichiers, elle fait un dictionnaire pour chaque fichier
+    avec toutes les informations nécessaires pour pouvoir les trier avec les 
+    différentes fonctions.
+    """
+    dicts = [ ]
+    for i in range(len(chemins)):
+        dicts.append({ })
+        dicts[i]["name"] = pathlib.Path(chemins[i]).name
+        dicts[i]["creation"] = os.stat(chemins[i]).st_birthtime
+        dicts[i]["lastmodif"] = os.stat(chemins[i]).st_mtime
+        dicts[i]["size"] = os.stat(chemins[i]).st_size
+        dicts[i]["type"] = os.path.splitext(chemins[i])[-1]
+    return dicts
+
+#### MAIN ####
+
+def maintri():
+    fichiers_a_trier = []
+    chemins = []
+    qst = (int(input("Combien de fichiers tu veux trier ?")))
+    for i in range(qst):
+        rep = input("Quel est le nom du fichier n°",i)
+        rep2 = input("Quel est son chemin?")
+        fichiers_a_trier.append(rep)
+        chemins.append(rep2)
+    tri = int(input("Quel type de tri veux-tu (type:1 ; taile croissante:2 ; taille décroissante:3 ; date de creation croissante:4 ; date de creation décroissante:5 ; date de derniere modif croissante:6 ; date de derniere modif decroissante:7 ; ordre alphabetique:8 ; ordre alphabétique decroissant:9) ?"))
+    infos = info_fichiers (chemins)
+    if tri == 1 :
+        return tri_par_type_fichier(infos)
+    elif tri == 2:
+        return tri_taille_croissant(infos)
+    elif tri == 3:
+        return tri_taille_decroissant(infos)
+    elif tri == 4:
+        return tri_date_creation_croissante(infos)
+    elif tri == 5:
+        return tri_date_creation_decroissante(infos)
+    elif tri == 6:
+        return tri_date_modification_croissante(infos)
+    elif tri == 7:
+        return tri_date_modification_decroissante(infos)
+    elif tri == 8:
+        return tri_alph_croissant(infos)
+    elif tri == 9:
+        return tri_alph_decroissant(infos)
+    else:
+        return ("Vous n'avez pas bien répondu a la question sur le tri.")
