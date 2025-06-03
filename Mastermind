@@ -1,0 +1,242 @@
+# -*- coding: utf-8 -*-
+######################### - INTRODUCTION - ###########################
+"""
+Programme pour jouer au mastermind contre un robot ou contre un ami.
+authors:
+etienne.lealpetit
+thomas.benoit
+paul.orliange
+"""
+
+####################### - IMPORTATIONS - ###########################
+
+from random import randint
+
+##################### - DEFINITION DES FONCTIONS - ###################
+
+def code_secret_multiplayer(numero_joueur):
+    """
+    Parameters
+        DESCRIPTION.
+        Permet de choisir un code secret quand on joue à 2 joueurs
+        Vérifie si le code secret est bien choisi et qu'il n'y a pas deux
+        fois la même couleur
+        Annonce aussi à chaque fois les couleurs diponibles lorsque le joueur
+        en insère une dans le code secret
+        A la fin, on renvoie le code secret, si le joueur l'a bien retenu,
+        lui souhaite une bonne partie et le code secret remonte de 200 lignes
+        dans la console'
+    """
+    dic = {"bleu":1,"rouge":2,"gris":3,"marron":4,"jaune":5,"rose":6,"noir":7,"orange":8,"vert":9,"blanc":10}
+    option = ["bleu","rouge","gris","marron","jaune","rose","noir","orange","vert","blanc"]
+    #toutes les options de couleurs choisies
+    option2 = ["bleu","rouge","gris","marron","jaune","rose","noir","orange","vert","blanc"]
+    #on enlève ici les couleurs choisies par le joueur
+    print("Au joueur " + str(numéro_joueur) + " de jouer.")
+    print("Choisir entre les couleurs :")
+    print("bleu / rouge / gris / marron / jaune / rose / noir / orange / vert / blanc")
+    print("Entrez votre combinaison secrète :")
+    couleurs = []
+    #les couleurs choisies par le joueur
+    choix_de_code_en_cours = []
+    #la liste contenant tout le code secret pas très secret
+    for i in range(1,6):
+        couleur = input(str("couleur "+ str(i) +" : "))
+        for p in range(0,9):
+            if couleur == (option[p]):
+                option2[p] = ("")
+                print (("Les couleurs disponibles sont : ") + str(option2))
+            #permet de remplacer la couleur choisie par le joueur par un espace dans 
+            #la liste option2
+        while couleur in couleurs:
+            print("Vous avez deja choisi la couleur "+couleur+"." + " Vous ne pouvez pas choisir deux fois la même couleur")
+            couleur = input(str("couleur "+ str(i) +" : "))
+            #si la couleur que le joueur veut prendre est déjà choisie,
+            #lui renvoie Vous ne pouvez pas choisir deux fois la même couleur
+        while couleur not in option:
+            print("La couleur n°"+str(i)+":" + " " + couleur + " " + "n'est pas valide.")
+            couleur = input(str("couleur "+ str(i) +" : "))
+            #si la couleur n'est pas disponible dans la liste option contenant toutes
+            #les couleurs possibles, renvoie la couleur (le nom de la couleur donné) n'est pas valide
+            for v in range(0,9):
+                if couleur == (option[v]):
+                    option2[v] = ("")
+                    print (("Les couleurs disponibles sont : ") + str(option2))
+            #remplace la couleur choisie par un espace dans la liste option2,
+            #faite pour montrer les couleurs déjà choisies
+        couleurs.append(couleur)
+    for i in range(0,5):
+        choix_de_code_en_cours.append(dic[couleurs[i]])
+    print("Vous avez choisi comme code les couleurs : " + str(couleurs))
+    while str(input("Avez-vous retenu vos couleurs ? repondre par Oui ou Non : ")) != str("Oui"):
+        print("Chef fais un effort")
+    for i in range(200):
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BONNE PARTIE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    #demande au joueur s'il a bien retenu son code couleur, si oui, print 200 fois bonne partie
+    #qui permet d'éloigner de 200 lignes le code secret pour que l'autre joueur
+    #ne puisse pas le voir
+    return (choix_de_code_en_cours)
+
+def correction_essai(essai,code):
+    """
+    
+
+    Parameters
+    ----------
+    essai : list
+        essai en cours de correction.
+    code : list
+        code secret servant de correction.
+
+    Returns
+    -------
+    modifie la liste corrections pour y ajouter la correction du dernière essai
+    corr : list
+        correction du dernier essai.
+
+    """
+    corr = []
+    correction = []
+    for i in range(0,5):
+        if essai[i] in code:
+            corr.append("-")
+            if code[i] == essai[i]:
+                corr[-1] = "+"
+    for i in range(0,len(corr)):
+        if corr[i] == "+":
+            correction.append("+")
+    for i in range(0,len(corr)):
+        if corr[i] == "-":
+            correction.append("-")
+    return(correction)
+
+def code_secret_aléatoire():
+    """
+    Type : FONCTION
+    DESCRIPTION.
+    Retourne le code secret aléatoire comprenant 5 nombres compris
+    entre 1 et 10, un nombre ne peut pas être présent 2 fois dans le code.
+    -----
+    La fonction ne prend pas d'argument, elle crée le code secret elle-même
+    sans prendre en compte les autres fonctions ou la grille du Mastermind'
+
+    """
+    nombres_disponibles = [1,2,3,4,5,6,7,8,9,10]
+    code = [0,0,0,0,0]
+    while code == [0,0,0,0,0]:
+        for i in range (0,5):
+            r = randint(0,9)
+            while nombres_disponibles[r] == 0 and nombres_disponibles != [0,0,0,0,0,0,0,0,0,0]: 
+            #Tant que l'élément de la liste a déjà été sélectionné et quand la liste 
+            #des nombres disponibles n'est pas vide, on reprend un autre nombre de la liste des
+            #nombres disponibles
+                r = randint(0,9)
+            k = r
+            code[i] = nombres_disponibles[r] #on ajoute le nombre aléatoire choisi au code secret
+            nombres_disponibles[k] = 0
+    return (code)
+
+def nouvelessai(num):
+    """
+    
+
+    Parameters
+    ----------
+    num : int
+        le numéro du joueur en train de joueur.
+
+    Returns
+    -------
+    essai_en_cours : list
+        la combinaison que le joueur souhaite tester.
+
+    """
+    dic = {"bleu":1,"rouge":2,"gris":3,"marron":4,"jaune":5,"rose":6,"noir":7,"orange":8,"vert":9,"blanc":10}
+    option = ["bleu","rouge","gris","marron","jaune","rose","noir","orange","vert","blanc"]
+    print("Au Joueur " + str(num) + " de jouer.")
+    print("Choisir entre les couleurs :")
+    print("bleu,rouge,gris,marron,jaune,rose,noir,orange,vert,blanc")
+    print("Entrez votre combinaison :")
+    couleurs = []
+    essai_en_cours = []
+    for i in range(1,6):
+        couleur = input(str("couleur "+ str(i) +" :"))
+        while couleur in couleurs:
+            print("Vous avez déja choisi la couleur "+couleur+".")
+            couleur = input(str("couleur "+ str(i) +" :"))
+        while couleur not in option:
+            print("La couleur n°"+str(i)+":" + " " + couleur + " " + "n'est pas valide.")
+            couleur = input(str("couleur "+ str(i) +" :"))
+        couleurs.append(couleur)
+    for i in range(0,5):
+        essai_en_cours.append(dic[couleurs[i]])
+    return(essai_en_cours,couleurs)
+
+######################### - PROGRAMME PRINCIPAL - ###########################
+
+print("Voulez-vous jouer contre un robot ou contre un autre joueur ?(robot/joueur)") #paramètrage de la partie
+reps = ["robot","joueur"]
+rep = None
+correction = []
+while rep not in reps:
+    rep = input(str("réponse : "))
+nbre_manche = int(input(("En combien de manche ?"))) 
+
+if rep == reps[0]: #partie contre un robot
+    score = 0
+    for manche in range(nbre_manche):
+        print("Nouvelle manche")
+        correction = []
+        corrections = []
+        essais = []
+        essaiscouleurs = []
+        affichage = ""
+        code_secret = code_secret_aléatoire()
+        while correction != ["+","+","+","+","+"]:
+            essai_en_cours,couleurs = nouvelessai(1)
+            essais.append(essai_en_cours)
+            score = score + 1
+            correction = correction_essai(essai_en_cours,code_secret)
+            corrections.append(correction)
+            affichage = affichage + str(couleurs) + " " + str(correction) + '\n'
+            print(affichage)
+            if correction != ["+","+","+","+","+"]:
+                input("Tapez barre espace puis entrer pour un nouvel essai")
+        print("Vous avez terminé cette manche en " + str(len(essais)) + " essais.")
+    print("Vous avez terminé " + str(nbre_manche) + " manches en " + str(score) + " essais." )
+
+if rep == reps[1]: #partie contre un joueur
+    score = [0,0]
+    for manche in range(nbre_manche*2):
+        correction = []
+        corrections = []
+        essais = []
+        affichage = ""
+        if (manche+1)%2 == 0:
+            numéro_joueur = 1
+        else:
+            numéro_joueur = 2
+        code_secret = code_secret_multiplayer(numéro_joueur)
+        while correction != ["+","+","+","+","+"]:
+            if numéro_joueur == 1:
+                numéro_joueur = 2
+            else:
+                numéro_joueur = 1
+            essai_en_cours,couleurs = nouvelessai(numéro_joueur)
+            essais.append(essai_en_cours)
+            score[numéro_joueur-1] = score[numéro_joueur-1] + 1
+            correction = correction_essai(essai_en_cours,code_secret)
+            corrections.append(correction)
+            affichage = affichage + str(couleurs) + " " + str(correction) + '\n'
+            print(affichage)
+            if correction != ["+","+","+","+","+"]:
+                input("Tapez entrer pour un nouvel essai")
+        print("Joueur " + str(numéro_joueur) + " a terminé cette manche en " + str(len(essais)) + " essais.")
+    print("Joueur " + str(numéro_joueur) + " a terminé " + str(nbre_manche) + " manches en " + str(score[numéro_joueur-1]) + " essais." )
+if rep == reps[1]: #annonce du résultat final contre un joueur
+    if score[0] < score [1]:
+        print("Le joueur 2 a gagné les, il/elle a terminé " + str(nbre_manche)+ " en" + str(score[1]) + " essais. Alors que le joueur 2 les a résolus en "+str(score[0]) +" essais.")
+    elif score[0] > score [1]:
+        print("Le joueur 1 a gagné les, il/elle a terminé " + str(nbre_manche)+ " en" + str(score[0]) + " essais. Alors que le joueur 1 les a résolus en "+str(score[1]) +" essais.")
+    else:
+        print("Ex-aequo ! Les 2 joueurs on résolu toute les manches en " + str(score[0])+ " essais.")
